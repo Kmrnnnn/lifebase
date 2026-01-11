@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 export interface Module {
   id: string;
   user_id: string;
-  module_type: 'spending' | 'diet' | 'ingredients' | 'pet' | 'sleep' | 'exercise' | 'custom';
+  module_type: 'spending' | 'income' | 'diet' | 'ingredients' | 'pet' | 'sleep' | 'exercise' | 'social' | 'custom';
   module_name: string;
   icon: string | null;
   is_active: boolean;
@@ -17,21 +17,25 @@ export interface Module {
 
 const MODULE_ICONS: Record<string, string> = {
   spending: '💰',
+  income: '💵',
   diet: '🍽️',
   ingredients: '🛒',
   pet: '🐾',
   sleep: '😴',
   exercise: '🏃',
+  social: '👥',
   custom: '📦',
 };
 
 const MODULE_NAMES: Record<string, string> = {
   spending: '消费',
+  income: '收入',
   diet: '饮食',
   ingredients: '食材库',
   pet: '宠物',
   sleep: '作息',
   exercise: '运动',
+  social: '社交',
   custom: '自定义',
 };
 

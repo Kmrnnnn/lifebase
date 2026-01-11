@@ -106,7 +106,7 @@ export function AIChatBubble() {
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSend()}
           placeholder="问我任何问题..."
-          className="flex-1 bg-muted/50 border-0"
+          className="flex-1 bg-muted/50 border-0 text-gray-300 placeholder:text-gray-500"
           disabled={isLoading}
         />
         <button

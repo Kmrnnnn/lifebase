@@ -27,21 +27,37 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
+        model: 'google/gemini-3-flash-preview',
         messages: [
           {
             role: 'system',
-            content: `你是生活记录分析助手。分析用户输入的文字，提取消费、饮食等信息。
+            content: `你是生活记录智能分析助手。仔细分析用户输入的文字，准确识别是收入还是支出。
+
+**关键识别规则：**
+1. 收入关键词：工资、薪水、收入、进账、到账、发工资、奖金、红包、转入、收到、赚了、卖了
+2. 支出关键词：花了、买了、消费、付款、支付、外卖、打车、吃饭、购物、充值
+
+**金额处理：**
+- 收入记为正数
+- 支出记为负数（如用户说"花了38块"，amount应为-38）
+
 返回JSON格式：
 {
-  "category": "类别",
-  "subcategory": "子类",
-  "amount": 金额数字或null,
+  "category": "收入|餐饮|交通|购物|娱乐|生活|社交|其他",
+  "subcategory": "具体子类别",
+  "amount": 金额数字(支出为负,收入为正,无金额为null),
   "content": "整理后的描述",
-  "suggested_module": "spending|diet|ingredients|pet|sleep|exercise",
+  "suggested_module": "spending|income|diet|ingredients|pet|sleep|exercise|social",
+  "is_income": true或false,
   "confidence": 0.0-1.0
 }
-只返回JSON。`
+
+**注意**：
+- "收入2500"、"工资到了"等必须识别为收入，is_income为true，amount为正数
+- "花了"、"买了"等识别为支出，is_income为false，amount为负数
+- 社交相关（聚会、约会、见朋友）归类到social模块
+
+只返回JSON，不要其他文字。`
           },
           { role: 'user', content: text }
         ],
@@ -49,11 +65,15 @@ serve(async (req) => {
     });
 
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error('AI API error:', response.status, errorText);
       throw new Error('AI analysis failed');
     }
 
     const data = await response.json();
     const content = data.choices?.[0]?.message?.content || '';
+    console.log('AI response:', content);
+    
     const jsonMatch = content.match(/\{[\s\S]*\}/);
     
     if (!jsonMatch) {
@@ -61,6 +81,7 @@ serve(async (req) => {
     }
 
     const analysis = JSON.parse(jsonMatch[0]);
+    console.log('Parsed analysis:', analysis);
 
     return new Response(JSON.stringify(analysis), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -73,6 +94,7 @@ serve(async (req) => {
       amount: null,
       content: '无法解析',
       suggested_module: 'spending',
+      is_income: false,
       confidence: 0
     }), {
       status: 200,
