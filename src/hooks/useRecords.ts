@@ -49,13 +49,21 @@ export function useCreateRecord() {
   const { user } = useAuth();
 
   return useMutation({
-    mutationFn: async (record: Omit<Partial<RecordEntry>, 'user_id'>) => {
+    mutationFn: async (record: Omit<Partial<RecordEntry>, 'user_id' | 'id' | 'created_at' | 'recorded_at'>) => {
       if (!user) throw new Error('Not authenticated');
       const { data, error } = await supabase
         .from('records')
         .insert({
-          ...record,
           user_id: user.id,
+          input_type: record.input_type || 'text',
+          module_id: record.module_id,
+          content: record.content,
+          image_url: record.image_url,
+          amount: record.amount,
+          category: record.category,
+          subcategory: record.subcategory,
+          ai_analysis: record.ai_analysis as any,
+          tags: record.tags,
         })
         .select()
         .single();

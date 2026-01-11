@@ -8,11 +8,13 @@ import { useCreateRecord } from '@/hooks/useRecords';
 
 const MODULE_NAMES: Record<string, string> = {
   spending: '消费',
+  income: '收入',
   diet: '饮食',
   ingredients: '食材库',
   pet: '宠物',
   sleep: '作息',
   exercise: '运动',
+  social: '社交',
 };
 
 export function TextInputBar() {
@@ -66,7 +68,7 @@ export function TextInputBar() {
         value={text}
         onChange={(e) => setText(e.target.value)}
         placeholder="输入：今天吃了38块炸鸡..."
-        className="flex-1 bg-muted/50 border-0 focus-visible:ring-1 focus-visible:ring-primary"
+        className="flex-1 bg-muted/50 border-0 focus-visible:ring-1 focus-visible:ring-primary text-gray-300 placeholder:text-gray-500"
         disabled={isProcessing}
       />
       <button
