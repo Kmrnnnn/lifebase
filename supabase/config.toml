@@ -1,1 +1,13 @@
 project_id = "kbaqyzjzctzwardvgrgi"
+
+[functions.analyze-image]
+verify_jwt = false
+
+[functions.analyze-text]
+verify_jwt = false
+
+[functions.ai-chat]
+verify_jwt = false
+
+[functions.voice-to-text]
+verify_jwt = false

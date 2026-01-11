@@ -10,6 +10,7 @@ import Onboarding from "./pages/Onboarding";
 import Insights from "./pages/Insights";
 import Bank from "./pages/Bank";
 import ModuleDetail from "./pages/ModuleDetail";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/insights" element={<Insights />} />
             <Route path="/bank" element={<Bank />} />
             <Route path="/bank/:id" element={<ModuleDetail />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useCreateModule } from '@/hooks/useModules';
 import { useCreateRecord } from '@/hooks/useRecords';
+import { VoiceInputButton } from './VoiceInputButton';
 
 const MODULE_NAMES: Record<string, string> = {
   spending: '消费',
@@ -50,9 +51,13 @@ export function TextInputBar() {
         ai_analysis: data,
       });
 
-      toast.success('记录已保存！', {
-        description: `已添加到 ${MODULE_NAMES[data.suggested_module]} 模块`,
-      });
+      const moduleName = MODULE_NAMES[data.suggested_module] || data.suggested_module;
+      const isIncome = data.is_income;
+      
+      toast.success(
+        isIncome ? '收入已记录！' : '记录已保存！', 
+        { description: `已添加到 ${moduleName} 模块` }
+      );
       setText('');
     } catch (error) {
       console.error('Processing error:', error);
@@ -63,18 +68,20 @@ export function TextInputBar() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="glass rounded-2xl p-3 flex gap-2">
+    <form onSubmit={handleSubmit} className="glass rounded-2xl p-3 flex gap-2 items-center">
       <Input
         value={text}
         onChange={(e) => setText(e.target.value)}
         placeholder="输入：今天吃了38块炸鸡..."
-        className="flex-1 bg-muted/50 border-0 focus-visible:ring-1 focus-visible:ring-primary text-gray-300 placeholder:text-gray-500"
+        className="flex-1 bg-muted/50 border-0 focus-visible:ring-1 focus-visible:ring-primary text-foreground placeholder:text-muted-foreground"
         disabled={isProcessing}
+        style={{ color: 'hsl(150 20% 90%)' }}
       />
+      <VoiceInputButton />
       <button
         type="submit"
         disabled={!text.trim() || isProcessing}
-        className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center disabled:opacity-50 hover:opacity-90 transition-opacity"
+        className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center disabled:opacity-50 hover:opacity-90 transition-opacity"
       >
         {isProcessing ? (
           <Loader2 className="w-5 h-5 text-primary-foreground animate-spin" />
