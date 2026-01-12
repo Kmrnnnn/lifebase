@@ -36,12 +36,12 @@ serve(async (req) => {
   try {
     const { message, history, userId } = await req.json();
     
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
     const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 
-    if (!LOVABLE_API_KEY) {
-      throw new Error('LOVABLE_API_KEY not configured');
+    if (!OPENAI_API_KEY) {
+      throw new Error('OPENAI_API_KEY not configured');
     }
 
     const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
@@ -77,20 +77,21 @@ ${amount ? `识别到金额: ${isIncome ? '+' : '-'}${amount}元` : ''}
 - 偶尔给出一个小建议或鼓励
 - 回复控制在100字以内`;
 
-    // Call AI for response
-    const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    // Call OpenAI GPT-5 for response
+    const aiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+        'Authorization': `Bearer ${OPENAI_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'google/gemini-3-flash-preview',
+        model: 'gpt-5',
         messages: [
           { role: 'system', content: systemPrompt },
           ...history.map((h: any) => ({ role: h.role, content: h.content })),
           { role: 'user', content: message }
         ],
+        max_completion_tokens: 500,
       }),
     });
 
